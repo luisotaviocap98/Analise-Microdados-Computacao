@@ -32,6 +32,8 @@ def getData():
     new_df = pd.read_csv('enade_regression.csv',sep=',',decimal='.')
     features = new_df.loc[:, new_df.columns != 'nota_geral_normalizada']
 
+    # new_df.drop('nota_geral_categoria_2_60', 'nota_geral_categoria_2', 'nota_geral_categoria_3', 'nota_geral_categoria_5', axis=1)
+
     X = features
     y = new_df['nota_geral_normalizada'] #variavel alvo
 
