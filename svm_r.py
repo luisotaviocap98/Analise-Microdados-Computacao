@@ -39,13 +39,13 @@ def getData():
 
     cv = KFold(n_splits=4, random_state=1, shuffle=True) #25% teste
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25,stratify=y.tolist())
     
     return X,y,cv, X_train, y_train
 
 
 def runCV(regressor, X,y,cv, X_train, y_train):    
-    regressor.fit(X_train, y_train)
+    # regressor.fit(X_train, y_train)
     y_pred = cross_val_predict(regressor, X, y, cv=cv, n_jobs=-1, verbose=15)
     
     return y_pred

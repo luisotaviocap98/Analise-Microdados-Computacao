@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-from sklearn.model_selection import KFold
+from sklearn.model_selection import StratifiedKFold
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import cross_val_predict
 from sklearn import metrics
@@ -40,19 +40,19 @@ def getData():
     new_df = pd.read_csv('enade_classifier.csv',sep=',',decimal='.')
     features = new_df.loc[:, new_df.columns != 'nt_geral_categoria_5']
     # new_df.drop('nota_geral_normalizada_2_60', 'nota_geral_normalizada_2', 'nota_geral_normalizada_3', 'nota_geral_normalizada_5', axis=1)
-    new_df.drop( ['nt_geral_categoria_2', 'nt_geral_categoria_3', 'nt_geral_categoria_2_60'], axis=1)
+    new_df.drop( ['nt_geral_categoria_2', 'nt_geral_categoria_3', 'nt_geral_categoria_2_60'], axis=1, inplace=True)
 
     X = features
     y = new_df['nt_geral_categoria_5'] #variavel alvo
 
-    cv = KFold(n_splits=4, random_state=1, shuffle=True) #25% teste
+    cv = StratifiedKFold(n_splits=4, random_state=1, shuffle=True) #25% teste
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25,stratify=y.tolist())
     
     return X,y,cv, X_train, y_train
 
 def runCV(classificador, X,y,cv, X_train, y_train):    
-    classificador.fit(X_train, y_train)
+    # classificador.fit(X_train, y_train)
     y_pred = cross_val_predict(classificador, X, y, cv=cv, n_jobs=-1, verbose=15)
     
     return y_pred
@@ -78,7 +78,7 @@ def main():
         
         y_pred = runCV(classificador, X,y,cv, X_train, y_train)
 
-        saveConfusion(confusion_matrix(y, y_pred, labels=[0,1,2,3,4]), nome_modelo, y, y_pred)
+        saveConfusion(confusion_matrix(y, y_pred, labels=[0,1,2,3,4]), nome_modelo+'_5', y, y_pred)
 
         
 if __name__ == '__main__':
